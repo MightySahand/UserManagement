@@ -1,2 +1,0 @@
-# UserManagement
-User Management Project 
