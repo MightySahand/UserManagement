@@ -69,15 +69,10 @@ public class UserServiceImpl implements UserService {
 
     // Admin Role Can only do this
     public List<UserDTO> getAllUsers() {
-        isAdmin();
         List<UserEntity> list = (List<UserEntity>) userRepo.findAll();
         List<UserDTO> listDTO = new ArrayList<>();
         list.forEach(userEntity -> listDTO.add(UserMapper.toUserDTO(UserMapper.toUserModel(userEntity))));
         return listDTO;
-    }
-
-    private boolean isAdmin() {
-        return true;
     }
 
     public boolean transferMoney(String token, String destUserName, double amount) {

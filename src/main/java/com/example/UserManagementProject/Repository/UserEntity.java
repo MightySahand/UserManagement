@@ -28,6 +28,9 @@ public class UserEntity {
     @Column(name = "balance")
     private Double balance = 0.0;
 
+    @Column(name = "role")
+    private Role role = Role.Client;
+
     public void addMoney(@NotNull double amount) {
         this.balance += amount;
     }
