@@ -16,10 +16,14 @@ public class UserServiceImpl implements UserService {
     //Repo Interface
     final UserRepo userRepo;
 
+    // GoogleDriveService Object
+    final GoogleDriveService googleDriveService;
+
     @Autowired
-    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper) {
-        log.info("Service Layer is created!");
+    public UserServiceImpl(UserRepo userRepo, UserMapper userMapper, GoogleDriveService googleDriveService) {
+        this.googleDriveService = googleDriveService;
         this.userRepo = userRepo;
+        log.info("Service Layer is created!");
         userRepo.deleteAll();
         userRepo.save(new UserEntity("admin", "admin Password"));
         userRepo.save(new UserEntity("John", "Grishman"));
