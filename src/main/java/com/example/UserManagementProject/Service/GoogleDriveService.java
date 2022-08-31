@@ -1,5 +1,6 @@
 package com.example.UserManagementProject.Service;
 
+import com.example.UserManagementProject.Annotation.LogNeeded;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -59,6 +60,7 @@ public class GoogleDriveService {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
+    @LogNeeded
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
         // Load client secrets.
@@ -92,6 +94,7 @@ public class GoogleDriveService {
         }
     }
 
+    @LogNeeded
     private void uploadTextFile(String name, String path) throws GoogleJsonResponseException {
         // Upload file Sahand.txt on drive.
         File fileMetadata = new File();
@@ -115,6 +118,7 @@ public class GoogleDriveService {
         }
     }
 
+    @LogNeeded
     private void printFilesInformation(int amount) {
         // Print the names and IDs for up to "amount" files.
         FileList result;
@@ -137,6 +141,7 @@ public class GoogleDriveService {
         }
     }
 
+    @LogNeeded
     private void makeFolder(String name) throws GoogleJsonResponseException {
         // File's metadata.
         File fileMetadata = new File();
@@ -156,6 +161,7 @@ public class GoogleDriveService {
         }
     }
 
+    @LogNeeded
     private void downloadFile(String realFileId) throws GoogleJsonResponseException {
         try {
             OutputStream outputStream = new ByteArrayOutputStream();
@@ -173,6 +179,7 @@ public class GoogleDriveService {
         }
     }
 
+    @LogNeeded
     private List<File> searchFile() throws IOException {
         List<File> files = new ArrayList<>();
         String pageToken = null;
@@ -196,6 +203,7 @@ public class GoogleDriveService {
         return files;
     }
 
+    @LogNeeded
     private void storeApplicationSpecificData() {
         try {
             // File's metadata.

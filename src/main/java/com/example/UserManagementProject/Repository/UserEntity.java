@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_entity")
 public class UserEntity {
 
@@ -29,11 +30,7 @@ public class UserEntity {
     private Double balance = 0.0;
 
     @Column(name = "role")
-    private Role role = Role.Client;
-
-    public void addMoney(@NotNull double amount) {
-        this.balance += amount;
-    }
+    private int role = 2;
 
     public UserEntity(String userName, String password) {
         this.userName = userName;

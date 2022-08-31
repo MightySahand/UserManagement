@@ -1,7 +1,10 @@
 package com.example.UserManagementProject.Repository;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.AttributeConverter;
 
+@Component
 public class RoleConverter implements AttributeConverter<Role, Integer> {
 
 

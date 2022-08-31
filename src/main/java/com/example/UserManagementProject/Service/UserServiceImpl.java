@@ -82,11 +82,11 @@ public class UserServiceImpl implements UserService {
     public boolean transferMoney(String token, String destUserName, double amount) {
         // See if we are logged in
         if (!token.equals("") && JWTToken.ValidateToken(token)) {
-            UserEntity Sender = userRepo.findByUserName(JWTToken.ExtractInfoFromToken(token, "username"));
-            if (Sender != null && Sender.getBalance() >= amount) {
+            UserEntity sender = userRepo.findByUserName(JWTToken.ExtractInfoFromToken(token, "username"));
+            if (sender != null && sender.getBalance() >= amount) {
                 UserEntity reciever = userRepo.findByUserName(destUserName);
-                reciever.addMoney(amount);
-                Sender.addMoney(-amount);
+                reciever.setBalance(reciever.getBalance() + amount);
+                sender.setBalance(sender.getBalance() - amount);
                 return true;
             }
             throw new RuntimeException("Sender Not Found Or Your Account Balance isn't enough!");
