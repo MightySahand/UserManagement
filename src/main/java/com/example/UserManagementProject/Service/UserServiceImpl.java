@@ -1,10 +1,10 @@
 package com.example.UserManagementProject.Service;
 
 import com.example.UserManagementProject.DTO.UserDTO;
-import com.example.UserManagementProject.Exceptions.INSUFFICIENT_AMOUNT_OF_MONEYException;
-import com.example.UserManagementProject.Exceptions.IS_NOT_LOGGED_INException;
-import com.example.UserManagementProject.Exceptions.PASSWORD_DOES_NOT_MATCHException;
-import com.example.UserManagementProject.Exceptions.USER_NOT_FOUNDException;
+import com.example.UserManagementProject.Exceptions.InsufficientAmountOfMoneyException;
+import com.example.UserManagementProject.Exceptions.IsNotLoggedInException;
+import com.example.UserManagementProject.Exceptions.PasswordDoesNotMatchException;
+import com.example.UserManagementProject.Exceptions.UserNotFoundException;
 import com.example.UserManagementProject.Repository.UserEntity;
 import com.example.UserManagementProject.Repository.UserRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -53,12 +53,12 @@ public class UserServiceImpl implements UserService {
                 return JWTToken.getToken(userDTO);
             } else {
                 // The Password isn't Equal
-                throw new PASSWORD_DOES_NOT_MATCHException();
+                throw new PasswordDoesNotMatchException();
             }
         } else {
             //The UserName is not present
             log.warn("UserName NotFound!");
-            throw new USER_NOT_FOUNDException();
+            throw new UserNotFoundException();
         }
     }
 
@@ -93,9 +93,9 @@ public class UserServiceImpl implements UserService {
                 sender.setBalance(sender.getBalance() - amount);
                 return true;
             }
-            throw new INSUFFICIENT_AMOUNT_OF_MONEYException();
+            throw new InsufficientAmountOfMoneyException();
         }
-        throw new IS_NOT_LOGGED_INException();
+        throw new IsNotLoggedInException();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
         if (userRepo.existsByUserName(userName)) {
             return UserMapper.toUserModel(userRepo.findByUserName(userName));
         }
-        throw new USER_NOT_FOUNDException();
+        throw new UserNotFoundException();
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.example.UserManagementProject.Exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -33,49 +32,49 @@ public class RestResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(value
-            = {USER_NOT_FOUNDException.class})
-    protected ResponseEntity<Object> HandleUSER_NOT_FOUNDException(USER_NOT_FOUNDException ex, WebRequest request) {
-        String bodyOfResponse = "USER_NOT_FOUNDException has Occurred";
+            = {UserNotFoundException.class})
+    protected ResponseEntity<Object> HandleUSER_NOT_FOUNDException(UserNotFoundException ex, WebRequest request) {
+        String bodyOfResponse = "UserNotFoundException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
 
     @ExceptionHandler(value
-            = {PASSWORD_DOES_NOT_MATCHException.class})
-    protected ResponseEntity<Object> HandlePASSWORD_DOES_NOT_MATCHException(PASSWORD_DOES_NOT_MATCHException ex, WebRequest request) {
-        String bodyOfResponse = "PASSWORD_DOES_NOT_MATCHException has Occurred";
+            = {PasswordDoesNotMatchException.class})
+    protected ResponseEntity<Object> HandlePASSWORD_DOES_NOT_MATCHException(PasswordDoesNotMatchException ex, WebRequest request) {
+        String bodyOfResponse = "PasswordDoesNotMatchException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
 
     @ExceptionHandler(value
-            = {USERNAME_WAS_USED_BEFOREException.class})
-    protected ResponseEntity<Object> HandleUSERNAME_WAS_USED_BEFOREException(USERNAME_WAS_USED_BEFOREException ex, WebRequest request) {
-        String bodyOfResponse = "USERNAME_WAS_USED_BEFOREException has Occurred";
+            = {UserNameWasUsedBeforeException.class})
+    protected ResponseEntity<Object> HandleUSERNAME_WAS_USED_BEFOREException(UserNameWasUsedBeforeException ex, WebRequest request) {
+        String bodyOfResponse = "UserNameWasUsedBeforeException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
 
     @ExceptionHandler(value
-            = {USERNAME_IS_EMPTYException.class})
-    protected ResponseEntity<Object> HandleUSERNAME_IS_EMPTYException(USERNAME_IS_EMPTYException ex, WebRequest request) {
-        String bodyOfResponse = "USERNAME_IS_EMPTYException has Occurred";
+            = {UserNameIsEmptyException.class})
+    protected ResponseEntity<Object> HandleUSERNAME_IS_EMPTYException(UserNameIsEmptyException ex, WebRequest request) {
+        String bodyOfResponse = "UserNameIsEmptyException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
 
     @ExceptionHandler(value
-            = {INSUFFICIENT_AMOUNT_OF_MONEYException.class})
-    protected ResponseEntity<Object> HandleINSUFFICIENT_AMOUNT_OF_MONEYException(INSUFFICIENT_AMOUNT_OF_MONEYException ex, WebRequest request) {
-        String bodyOfResponse = "INSUFFICIENT_AMOUNT_OF_MONEYException has Occurred";
+            = {InsufficientAmountOfMoneyException.class})
+    protected ResponseEntity<Object> HandleINSUFFICIENT_AMOUNT_OF_MONEYException(InsufficientAmountOfMoneyException ex, WebRequest request) {
+        String bodyOfResponse = "InsufficientAmountOfMoneyException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
 
     @ExceptionHandler(value
-            = {IS_NOT_LOGGED_INException.class})
-    protected ResponseEntity<Object> HandleIS_NOT_LOGGED_INException(IS_NOT_LOGGED_INException ex, WebRequest request) {
-        String bodyOfResponse = "IS_NOT_LOGGED_INException has Occurred";
+            = {IsNotLoggedInException.class})
+    protected ResponseEntity<Object> HandleIS_NOT_LOGGED_INException(IsNotLoggedInException ex, WebRequest request) {
+        String bodyOfResponse = "IsNotLoggedInException has Occurred";
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
     }
