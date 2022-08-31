@@ -10,8 +10,9 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    @NotEmpty(message = "{USER_NOT_FOUND}")
-    private String userName;
-    private String password;
+
+    @NotEmpty(message = "{USERNAME_IS_EMPTY}")
+    private String userName = "";
+    private String password = "";
 
 }

@@ -1,6 +1,8 @@
 package com.example.UserManagementProject.Service;
 
 import com.example.UserManagementProject.DTO.UserDTO;
+import com.example.UserManagementProject.Exceptions.PASSWORD_DOES_NOT_MATCHException;
+import com.example.UserManagementProject.Exceptions.USER_NOT_FOUNDException;
 import com.example.UserManagementProject.Repository.UserEntity;
 import com.example.UserManagementProject.Repository.UserRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -49,12 +51,12 @@ public class UserServiceImpl implements UserService {
                 return JWTToken.getToken(userDTO);
             } else {
                 // The Password isn't Equal
-                throw new RuntimeException("Password Doesn't match");
+                throw new PASSWORD_DOES_NOT_MATCHException();
             }
         } else {
             //The UserName is not present
             log.warn("UserName NotFound!");
-            throw new RuntimeException("UserName Not Found!");
+            throw new USER_NOT_FOUNDException();
         }
     }
 
@@ -126,7 +128,4 @@ public class UserServiceImpl implements UserService {
         return userRepo.existsByUserName(userDTO.getUserName());
     }
 
-    public void SayHello() {
-        log.info("Helloo!!!");
-    }
 }

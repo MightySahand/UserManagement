@@ -1,5 +1,6 @@
 package com.example.UserManagementProject.Controller;
 
+import com.example.UserManagementProject.Exceptions.SahandException;
 import com.example.UserManagementProject.Service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ public class TestController implements ControllerInterface {
 
     @RequestMapping("/test")
     public String index() {
-        userServiceImpl.SayHello();
-        return "dsahkjdhasd";
+        throw new SahandException("Sahand Exception!");
     }
 }
