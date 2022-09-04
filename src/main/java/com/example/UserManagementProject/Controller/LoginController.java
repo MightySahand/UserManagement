@@ -2,6 +2,7 @@ package com.example.UserManagementProject.Controller;
 
 import com.example.UserManagementProject.Annotation.NotLoginRequired;
 import com.example.UserManagementProject.DTO.UserDTO;
+import com.example.UserManagementProject.Service.GoogleDriveService;
 import com.example.UserManagementProject.Service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
+//@CrossOrigin(origins = "192.168.88.149/63647")
 public class LoginController implements ControllerInterface {
     final UserServiceImpl userServiceImpl;
 
@@ -22,7 +24,7 @@ public class LoginController implements ControllerInterface {
     }
 
     @NotLoginRequired
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login")
     public String Login(@CookieValue(name = "JWTToken", defaultValue = "") String token,
                         @RequestBody UserDTO userDTO,
                         HttpServletRequest request,
@@ -32,6 +34,4 @@ public class LoginController implements ControllerInterface {
         response.addCookie(c);
         return "Login Page";
     }
-
-
 }
