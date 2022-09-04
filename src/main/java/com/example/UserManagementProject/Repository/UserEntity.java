@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "user_entity")
 public class UserEntity {
 
@@ -35,5 +34,11 @@ public class UserEntity {
     public UserEntity(String userName, String password) {
         this.userName = userName;
         this.password = password;
+    }
+
+    public UserEntity(String userName, String password, Integer role) {
+        this.userName = userName;
+        this.password = password;
+        this.role = role;
     }
 }

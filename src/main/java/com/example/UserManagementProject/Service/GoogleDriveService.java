@@ -1,10 +1,12 @@
 package com.example.UserManagementProject.Service;
 
 import com.example.UserManagementProject.Annotation.LogNeeded;
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleBrowserClientRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -17,6 +19,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -29,6 +32,7 @@ import java.util.List;
 /* class to demonstrate use of Drive files list API */
 public class GoogleDriveService {
 
+    public static final String CLIENT_ID = "1002117847851-qo0tpq1585q2gm24guqnsbed7c14tgi1.apps.googleusercontent.com";
     /**
      * Application name.
      */
@@ -40,7 +44,7 @@ public class GoogleDriveService {
     /**
      * Directory to store authorization tokens for this application.
      */
-    private static final String TOKENS_DIRECTORY_PATH = "G:\\tokens";
+    private static final String TOKENS_DIRECTORY_PATH = "G:\\new\\tokens";
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -49,6 +53,7 @@ public class GoogleDriveService {
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
+
     // Build a new authorized API client service.
     static NetHttpTransport HTTP_TRANSPORT;
     static Drive service;
@@ -56,46 +61,49 @@ public class GoogleDriveService {
     /**
      * Creates an authorized Credential object.
      *
-     * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    @LogNeeded
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
-            throws IOException {
-        // Load client secrets.
-        InputStream in = GoogleDriveService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
-        GoogleClientSecrets clientSecrets =
-                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
+    public String getAuthorizationURL() {
+        return new GoogleBrowserClientRequestUrl(CLIENT_ID, "http://localhost:8080/callback", SCOPES)
+                .setState("/profile")
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        //returns an authorized Credential object.
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-    }
-
-
-    static {
-        try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
-        } catch (GeneralSecurityException | IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @LogNeeded
-    private void uploadTextFile(String name, String path) throws GoogleJsonResponseException {
+    public Credential getCredentials(String accessToken) {
+//        // Load client secrets.
+//        InputStream in = GoogleDriveService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+//        if (in == null) {
+//            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+//        }
+//        GoogleClientSecrets clientSecrets =
+//                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+//
+//        // Build flow and trigger user authorization request.
+//        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+//                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+//                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+//                .setAccessType("offline").setApprovalPrompt("force")
+//                .build();
+//        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+////        //returns an authorized Credential object.
+//        new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod());
+        credential.setAccessToken(accessToken);
+        return credential;
+    }
+
+    public void getService(Credential credentials) throws GeneralSecurityException, IOException {
+        HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credentials)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+    }
+
+    @LogNeeded
+    public void uploadTextFile(String name, String path) {
         // Upload file Sahand.txt on drive.
         File fileMetadata = new File();
         fileMetadata.setName(name);
@@ -112,14 +120,13 @@ public class GoogleDriveService {
         } catch (GoogleJsonResponseException e) {
             // TODO(developer) - handle error appropriately
             System.err.println("Unable to upload file: " + e.getDetails());
-            throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @LogNeeded
-    private void printFilesInformation(int amount) {
+    public void printFilesInformation(int amount) {
         // Print the names and IDs for up to "amount" files.
         FileList result;
         try {
@@ -142,7 +149,7 @@ public class GoogleDriveService {
     }
 
     @LogNeeded
-    private void makeFolder(String name) throws GoogleJsonResponseException {
+    public void makeFolder(String name) {
         // File's metadata.
         File fileMetadata = new File();
         fileMetadata.setName(name);
@@ -162,7 +169,7 @@ public class GoogleDriveService {
     }
 
     @LogNeeded
-    private void downloadFile(String realFileId) throws GoogleJsonResponseException {
+    public void downloadFile(String realFileId) throws GoogleJsonResponseException {
         try {
             OutputStream outputStream = new ByteArrayOutputStream();
 
@@ -180,7 +187,7 @@ public class GoogleDriveService {
     }
 
     @LogNeeded
-    private List<File> searchFile() throws IOException {
+    public List<File> searchFile() throws IOException {
         List<File> files = new ArrayList<>();
         String pageToken = null;
         do {
@@ -204,7 +211,7 @@ public class GoogleDriveService {
     }
 
     @LogNeeded
-    private void storeApplicationSpecificData() {
+    public void storeApplicationSpecificData() {
         try {
             // File's metadata.
             File fileMetadata = new File();

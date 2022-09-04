@@ -2,6 +2,8 @@ package com.example.UserManagementProject.Service;
 
 
 import com.example.UserManagementProject.DTO.UserDTO;
+import com.example.UserManagementProject.Repository.Role;
+import com.example.UserManagementProject.Repository.RoleConverter;
 import com.example.UserManagementProject.Repository.UserEntity;
 import com.example.UserManagementProject.Repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     private static UserRepo userRepo;
+    private static RoleConverter roleConvertor;
 
     @Autowired
-    public UserMapper(UserRepo userRepo) {
+    public UserMapper(UserRepo userRepo, RoleConverter roleConverter) {
         this.userRepo = userRepo;
+        this.roleConvertor = roleConverter;
     }
 
 
@@ -30,11 +34,19 @@ public class UserMapper {
     }
 
     // UserModel -> UserEntity
-    public static UserEntity toUserEntity(UserModel userModel) {
-        if (userRepo.existsByUserName(userModel.getUserName())) {
-            return userRepo.findByUserName(userModel.getUserName());
+    public static UserEntity toUserEntity(UserModel userModel, Role role) {
+        if (userRepo
+                .existsByUserName(userModel.getUserName())) {
+            return userRepo.findByUserName(
+                    userModel.getUserName());
         }
-        userRepo.save(new UserEntity(userModel.getUserName(), userModel.getPassword()));
+        userRepo.save(
+                new UserEntity(
+                        userModel.getUserName(),
+                        userModel.getPassword(),
+                        roleConvertor.convertToDatabaseColumn(role)
+                )
+        );
         return userRepo.findByUserName(userModel.getUserName());
     }
 
@@ -44,11 +56,16 @@ public class UserMapper {
     }
 
     // UserDTO -> UserEntity
-    public static UserEntity toUserEntity(UserDTO userDTO) {
+    public static UserEntity toUserEntity(UserDTO userDTO, Role role) {
         if (userRepo.existsByUserName(userDTO.getUserName())) {
             return userRepo.findByUserName(userDTO.getUserName());
         }
-        userRepo.save(new UserEntity(userDTO.getUserName(), userDTO.getPassword()));
+        userRepo.save(
+                new UserEntity(
+                        userDTO.getUserName(),
+                        userDTO.getPassword(),
+                        roleConvertor.convertToDatabaseColumn(role))
+        );
         return userRepo.findByUserName(userDTO.getUserName());
     }
 
