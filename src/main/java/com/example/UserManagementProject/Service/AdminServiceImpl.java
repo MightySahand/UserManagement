@@ -24,7 +24,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void createAdmin(UserDTO userDTO) throws IllegalAccessException {
         if (!userRepo.existsByUserName(userDTO.getUserName())) {
-            UserEntity x = UserMapper.toUserEntity(userDTO);
+            UserEntity x = UserMapper.toUserEntity(userDTO, Role.Client);
             x.setRole(roleConverter.convertToDatabaseColumn(Role.Admin));
             userRepo.save(x);
         } else {

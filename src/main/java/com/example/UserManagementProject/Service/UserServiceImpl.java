@@ -5,12 +5,16 @@ import com.example.UserManagementProject.Exceptions.InsufficientAmountOfMoneyExc
 import com.example.UserManagementProject.Exceptions.IsNotLoggedInException;
 import com.example.UserManagementProject.Exceptions.PasswordDoesNotMatchException;
 import com.example.UserManagementProject.Exceptions.UserNotFoundException;
+import com.example.UserManagementProject.Repository.Role;
 import com.example.UserManagementProject.Repository.UserEntity;
 import com.example.UserManagementProject.Repository.UserRepo;
+import com.google.api.services.drive.Drive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +78,6 @@ public class UserServiceImpl implements UserService {
         throw new RuntimeException("You are not Logged in!");
     }
 
-
     // Admin Role Can only do this
     public List<UserDTO> getAllUsers() {
         List<UserEntity> list = (List<UserEntity>) userRepo.findAll();
@@ -86,7 +89,10 @@ public class UserServiceImpl implements UserService {
     public boolean transferMoney(String token, String destUserName, double amount) {
         // See if we are logged in
         if (!token.equals("") && JWTToken.ValidateToken(token)) {
-            UserEntity sender = UserMapper.toUserEntity(readUser(JWTToken.ExtractInfoFromToken(token, "username")));
+            UserEntity sender = UserMapper.toUserEntity(
+                    readUser(
+                            JWTToken.ExtractInfoFromToken(token, "username")),
+                    Role.Client);
             if (sender != null && sender.getBalance() >= amount) {
                 UserEntity receiver = userRepo.findByUserName(destUserName);
                 receiver.setBalance(receiver.getBalance() + amount);
@@ -101,7 +107,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserDTO userDTO) {
         if (!userExists(userDTO)) {
-            userRepo.save(UserMapper.toUserEntity(UserMapper.toUserModel(userDTO)));
+            userRepo.save(UserMapper.toUserEntity(UserMapper.toUserModel(userDTO), Role.Client));
         } else {
             throw new RuntimeException("Cannot create an account because the user is present");
         }
@@ -125,12 +131,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserDTO userDTO) {
-        UserMapper.toUserEntity(readUser(userDTO)).setPassword(userDTO.getPassword());
+        UserMapper.toUserEntity(readUser(userDTO), Role.Client).setPassword(userDTO.getPassword());
     }
 
     @Override
     public void deleteUser(UserDTO userDTO) {
-        userRepo.delete(UserMapper.toUserEntity(readUser(userDTO)));
+        userRepo.delete(UserMapper.toUserEntity(readUser(userDTO), Role.Client));
     }
 
     @Override
@@ -138,4 +144,16 @@ public class UserServiceImpl implements UserService {
         return userRepo.existsByUserName(userDTO.getUserName());
     }
 
+    // Google API Services
+    public String getAuthorizationURL() {
+        return googleDriveService.getAuthorizationURL();
+    }
+
+    public void getService(String token) {
+        try {
+            googleDriveService.getService(googleDriveService.getCredentials(token));
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
